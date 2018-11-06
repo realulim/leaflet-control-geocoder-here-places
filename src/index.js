@@ -1,10 +1,10 @@
 var L = require('leaflet'),
- Dawa = require('./geocoders/dawa');
+    Hereplaces = require('./geocoders/hereplaces');
 // var L = {Control : {require('leaflet-control-geocoder');
 
-module.exports = Dawa.class;
+module.exports = HerePlaces.class;
 
 L.Util.extend(L.Control.Geocoder, {
-	DAWA: module.exports,
-	dawa: Dawa.factory
+	HerePlaces: module.exports,
+	hereplaces: Hereplaces.factory
 });

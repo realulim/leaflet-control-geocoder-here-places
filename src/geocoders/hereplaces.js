@@ -62,6 +62,6 @@ module.exports = {
 	}),
 
 	factory: function(options) {
-		return new L.Control.Geocoder.DAWA(options);
+		return new L.Control.Geocoder.HerePlaces(options);
 	}
 };
