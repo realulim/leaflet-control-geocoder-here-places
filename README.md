@@ -1,5 +1,5 @@
 ## Leaflet geocoder with support for HERE places API
-Hi all. This is a plugin for Per Liedmann's Leaflet.Control.Geocoder using the HERE places API.
+This is a plugin for Per Liedmann's Leaflet.Control.Geocoder using the HERE places API as a basis for geocoding requests.
 
 ### All the credit goes to Per
 Per's repository is here:
