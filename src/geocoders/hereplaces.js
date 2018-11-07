@@ -4,10 +4,12 @@ var L = require('leaflet'),
 module.exports = {
 	class: L.Class.extend({
 		options: {
-			serviceUrl: '//dawa.aws.dk/adgangsadresser/',
-			geocodingQueryParams: {},
-			reverseQueryParams: {},
-			wildcard: false
+		  geocodeUrl: 'http://geocoder.api.here.com/6.2/geocode.json',
+		  reverseGeocodeUrl: 'http://reverse.geocoder.api.here.com/6.2/reversegeocode.json',
+		  app_id: '<insert your app_id here>',
+		  app_code: '<insert your app_code here>',
+		  geocodingQueryParams: {},
+		  reverseQueryParams: {}
 		},
 
 		initialize: function(options) {
@@ -15,53 +17,37 @@ module.exports = {
 		},
 
 		geocode: function(query, cb, context) {
-			Util.jsonp(this.options.serviceUrl + '', L.extend({
-				q: this.options.wildcard ? query + '*' : query,
-			}, this.options.geocodingQueryParams),
-			function(data) {
-				var results = [], latLng;
-				for (var i = 0; i < data.length; i++) {
-					// Check if coordinates exists, otherwise skip
-					if (data[i].adgangspunkt.koordinater) {
-						latLng = L.latLng(data[i].adgangspunkt.koordinater[1],data[i].adgangspunkt.koordinater[0])
-						results.push({
-							name: data[i].vejstykke.navn + " " + data[i].husnr + ", " + data[i].postnummer.nr + " " + data[i].postnummer.navn,
-							// there is no bounding box in the results
-							bbox: L.latLngBounds(latLng, latLng),
-							center: latLng
-						});
-					}
-				};
-				cb.call(context, results);
-			}, this, 'callback');
+			var params = {
+			  searchtext: query,
+			  gen: 9,
+			  app_id: this.options.app_id,
+			  app_code: this.options.app_code,
+			  jsonattributes: 1
+			};
+			params = L.Util.extend(params, this.options.geocodingQueryParams);
+			Util.getJSON(this.options.geocodeUrl, params, cb, context);
 		},
 
 		suggest: function(query,cb,context) {
-			// DAWA has a autocomplete API endpoint, but it does not include location data
+			// TODO perhaps use HERE autocompletion API
 			return this.geocode(query, cb, context);
 		},
 
 		reverse: function(location, scale, cb, context) {
-			Util.jsonp(this.options.serviceUrl + 'reverse/', L.extend({
-				y: location.lat,
-				x: location.lng
-			},
-			this.options.reverseQueryParams), function(data) {
-				var result = [],latLng;
-				if (data && data.adgangspunkt) {
-					latLng = L.latLng(data.adgangspunkt.koordinater[1], data.adgangspunkt.koordinater[0]);
-					result.push({
-						name: data.vejstykke.navn + " " + data.husnr + ", " + data.postnummer.nr + " " + data.postnummer.navn,
-						center: latLng,
-						bounds: L.latLngBounds(latLng, latLng)
-					});
-				}
-				cb.call(context, result);
-			}, this, 'callback');
+			var params = {
+			  prox: encodeURIComponent(location.lat) + ',' + encodeURIComponent(location.lng),
+			  mode: 'retrieveAddresses',
+			  app_id: this.options.app_id,
+			  app_code: this.options.app_code,
+			  gen: 9,
+			  jsonattributes: 1
+			};
+			params = L.Util.extend(params, this.options.reverseQueryParams);
+			Util.getJSON(this.options.reverseGeocodeUrl, params, cb, context);
 		}
 	}),
 
 	factory: function(options) {
-		return new L.Control.Geocoder.HerePlaces(options);
+		return new L.Control.Geocoder.HEREPLACES(options);
 	}
 };
