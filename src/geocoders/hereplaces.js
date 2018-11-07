@@ -1,5 +1,5 @@
-var L = require('leaflet'),
-	Util = require('../util');
+var L = require('leaflet');
+var Util = require('../util');
 
 module.exports = {
 	class: L.Class.extend({
@@ -45,9 +45,5 @@ module.exports = {
 			params = L.Util.extend(params, this.options.reverseQueryParams);
 			Util.getJSON(this.options.reverseGeocodeUrl, params, cb, context);
 		}
-	}),
-
-	factory: function(options) {
-		return new L.Control.Geocoder.HEREPLACES(options);
-	}
+	})
 };

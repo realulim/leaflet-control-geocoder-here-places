@@ -4,6 +4,5 @@ var L = require('leaflet'),
 module.exports = HerePlaces.class;
 
 L.Util.extend(L.Control.Geocoder, {
-	HEREPLACES: module.exports,
-	hereplaces: HerePlaces.factory
+	HEREPLACES: module.exports
 });
