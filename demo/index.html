@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Leaflet Control Geocoder</title>
 
 	<meta name='viewport' content='width=device-width, user-scalable=no initial-scale=1, maximum-scale=1'>
+	<meta charset="UTF-8"><meta content="origin" name="referrer">
 
 	<link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" />
 	<link rel="stylesheet" href="../dist/Control.Geocoder.css" />
@@ -15,6 +17,7 @@
 		body {
 			margin: 0;
 		}
+
 		#map {
 			position: absolute;
 			width: 100%;
@@ -22,17 +25,11 @@
 		}
 	</style>
 </head>
+
 <body>
 	<div id="map"></div>
 
 	<script type="text/javascript">
-
-		L.Control.Geocoder.HEREPLACES.include({
-			suggest: function (query, cb, context) {
-				console.log(cb.toSource());
-				return this.geocode(query, cb, context);
-			}
-		});
 
 		var map = L.map('map').setView([55.6783, 12.5313], 14);
 		var geocoder = new L.Control.Geocoder.HEREPLACES({
@@ -40,31 +37,32 @@
 			app_id: 'bC4fb9WQfCCZfkxspD4z',
 			app_code: 'K2Cpd_EKDzrZb1tz0zdpeQ'
 		})
-		var control = L.Control.geocoder({
+		var control = new L.Control.Geocoder({
 			geocoder: geocoder
 		}).addTo(map);
 		var marker;
 
 		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-		    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 		}).addTo(map);
 
-		map.on('click', function(e) {
-			geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
-				var r = results[0];
-				if (r) {
-					if (marker) {
-						marker.
-							setLatLng(r.center).
-							setPopupContent(r.html || r.name).
-							openPopup();
-					} else {
-						marker = L.marker(r.center).bindPopup(r.name).addTo(map).openPopup();
+		map.on('click', function (e) {
+			geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function (results) {
+				if (results && results.response && results.response.view) {
+					var location = results.response.view[0].result[0].location;
+					if (location) {
+						let latlng = [location.displayPosition.latitude, location.displayPosition.longitude];
+						let label = location.address.label;
+						if (marker) {
+							marker.setLatLng(latlng).setPopupContent(label).openPopup();
+						} else {
+							marker = L.marker(latlng).bindPopup(label).addTo(map).openPopup();
+						}
 					}
 				}
-			})
-		})
+			});
+		});
 	</script>
 </body>
-</html>
 
+</html>
