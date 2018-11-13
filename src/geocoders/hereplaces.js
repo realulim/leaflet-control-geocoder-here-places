@@ -1,7 +1,7 @@
 var L = require('leaflet');
 
-export default {
-	class: L.Class.extend({
+module.exports = {
+	"class": L.Class.extend({
 		options: {
 			geocodeUrl: 'http://geocoder.api.here.com/6.2/geocode.json',
 			reverseGeocodeUrl: 'http://reverse.geocoder.api.here.com/6.2/reversegeocode.json',
@@ -45,8 +45,41 @@ export default {
 			this.getJSON(this.options.reverseGeocodeUrl, params, cb, context);
 		},
 
+		getParamString: function (obj, existingUrl, uppercase) {
+			var params = [];
+			for (var i in obj) {
+				var key = encodeURIComponent(uppercase ? i.toUpperCase() : i);
+				var value = obj[i];
+				if (!L.Util.isArray(value)) {
+					params.push(key + '=' + encodeURIComponent(value));
+				} else {
+					for (var j = 0; j < value.length; j++) {
+						params.push(key + '=' + encodeURIComponent(value[j]));
+					}
+				}
+			}
+			return (!existingUrl || existingUrl.indexOf('?') === -1 ? '?' : '&') + params.join('&');
+		},
+
+		executeQuery: function (url, params, callback) {
+			var xmlHttp = new XMLHttpRequest();
+			xmlHttp.onreadystatechange = function () {
+				if (xmlHttp.readyState !== 4) {
+					return;
+				}
+				if (xmlHttp.status !== 200 && xmlHttp.status !== 304) {
+					callback('');
+					return;
+				}
+				callback(JSON.parse(xmlHttp.response));
+			};
+			xmlHttp.open('GET', url + this.getParamString(params), true);
+			xmlHttp.setRequestHeader('Accept', 'application/json');
+			xmlHttp.send(null);
+		},
+
 		getJSON: function (url, params, cb, context) {
-			getJSON(url, params, function (data) {
+			this.executeQuery(url, params, function (data) {
 				var results = [],
 					loc,
 					latLng,
@@ -75,4 +108,5 @@ export default {
 	factory: function (options) {
 		return new L.Control.Geocoder.HEREPLACES(options);
 	}
+
 };

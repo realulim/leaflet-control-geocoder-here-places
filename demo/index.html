@@ -50,14 +50,11 @@
 		var marker;
 		map.on('click', function (e) {
 			geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function (data) {
-				if (data.response.view && data.response.view.length) {
-					let loc = data.response.view[0].result[0].location;
-					let latLng = L.latLng(loc.displayPosition.latitude, loc.displayPosition.longitude);
-					let label = loc.address.label;
+				if (data.length) {
 					if (marker) {
-						marker.setLatLng(latLng).setPopupContent(label).openPopup();
+						marker.setLatLng(data[0].center).setPopupContent(data[0].name).openPopup();
 					} else {
-						marker = L.marker(latLng).bindPopup(label).addTo(map).openPopup();
+						marker = L.marker(data[0].center).bindPopup(data[0].name).addTo(map).openPopup();
 					}
 				}
 			});
