@@ -31,21 +31,23 @@
 
 	<script type="text/javascript">
 
-		var map = L.map('map').setView([55.6783, 12.5313], 6);
-		var geocoder = new L.Control.Geocoder.HEREPLACES({
+		var hereGeocoder = new L.Control.Geocoder.HEREPLACES({
 			queryMinLength: 3,
 			app_id: 'bC4fb9WQfCCZfkxspD4z',
 			app_code: 'K2Cpd_EKDzrZb1tz0zdpeQ'
 		});
-		var control = new L.Control.Geocoder({
-			geocoder: geocoder
-		}).addTo(map);
-		var marker;
+
+		var map = L.map('map').setView([55.6783, 12.5313], 6),
+			geocoder = hereGeocoder,
+			control = L.Control.geocoder({
+				geocoder: hereGeocoder
+			}).addTo(map);
 
 		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
 		}).addTo(map);
 
+		var marker;
 		map.on('click', function (e) {
 			geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function (results) {
 				if (results && results.response && results.response.view) {
