@@ -24,7 +24,7 @@ export default {
 				jsonattributes: 1
 			};
 			params = L.Util.extend(params, this.options.geocodingQueryParams);
-			L.Util.getJSON(this.options.geocodeUrl, params, cb, context);
+			this.getJSON(this.options.geocodeUrl, params, cb, context);
 		},
 
 		suggest: function (query, cb, context) {
@@ -42,7 +42,32 @@ export default {
 				jsonattributes: 1
 			};
 			params = L.Util.extend(params, this.options.reverseQueryParams);
-			L.Util.getJSON(this.options.reverseGeocodeUrl, params, cb, context);
+			this.getJSON(this.options.reverseGeocodeUrl, params, cb, context);
+		},
+
+		getJSON: function (url, params, cb, context) {
+			getJSON(url, params, function (data) {
+				var results = [],
+					loc,
+					latLng,
+					latLngBounds;
+				if (data.response.view && data.response.view.length) {
+					for (var i = 0; i <= data.response.view[0].result.length - 1; i++) {
+						loc = data.response.view[0].result[i].location;
+						latLng = L.latLng(loc.displayPosition.latitude, loc.displayPosition.longitude);
+						latLngBounds = L.latLngBounds(
+							L.latLng(loc.mapView.topLeft.latitude, loc.mapView.topLeft.longitude),
+							L.latLng(loc.mapView.bottomRight.latitude, loc.mapView.bottomRight.longitude)
+						);
+						results[i] = {
+							name: loc.address.label,
+							bbox: latLngBounds,
+							center: latLng
+						};
+					}
+				}
+				cb.call(context, results);
+			});
 		}
 
 	}),

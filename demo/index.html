@@ -49,17 +49,15 @@
 
 		var marker;
 		map.on('click', function (e) {
-			geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function (results) {
-				if (results && results.response && results.response.view) {
-					var location = results.response.view[0].result[0].location;
-					if (location) {
-						let latlng = [location.displayPosition.latitude, location.displayPosition.longitude];
-						let label = location.address.label;
-						if (marker) {
-							marker.setLatLng(latlng).setPopupContent(label).openPopup();
-						} else {
-							marker = L.marker(latlng).bindPopup(label).addTo(map).openPopup();
-						}
+			geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function (data) {
+				if (data.response.view && data.response.view.length) {
+					let loc = data.response.view[0].result[0].location;
+					let latLng = L.latLng(loc.displayPosition.latitude, loc.displayPosition.longitude);
+					let label = loc.address.label;
+					if (marker) {
+						marker.setLatLng(latLng).setPopupContent(label).openPopup();
+					} else {
+						marker = L.marker(latLng).bindPopup(label).addTo(map).openPopup();
 					}
 				}
 			});
