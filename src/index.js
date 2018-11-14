@@ -1,5 +1,3 @@
-// var L = require('leaflet'),
-// HerePlaces = require('./geocoders/places');
 import L from 'leaflet' ;
 import HerePlaces from './geocoders/places'
 

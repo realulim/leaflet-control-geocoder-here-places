@@ -43,10 +43,10 @@
             }).addTo(map),
             marker;
 
-        new L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        new L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             minZoom: 2,
             maxZoom: 17,
-            attribution: 'Map data: &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende, SRTM | Kartendarstellung: © <a href="http://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
         }).addTo(map);
 
         map.on('click', function (e) {
