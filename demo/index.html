@@ -1,65 +1,67 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-	<title>Leaflet Control Geocoder</title>
+    <title>Leaflet Control Geocoder</title>
 
-	<meta name='viewport' content='width=device-width, user-scalable=no initial-scale=1, maximum-scale=1'>
-	<meta charset="UTF-8"><meta content="origin" name="referrer">
+    <meta name='viewport' content='width=device-width, user-scalable=no initial-scale=1, maximum-scale=1'>
 
-	<link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" />
-	<link rel="stylesheet" href="../dist/Control.Geocoder.css" />
+    <link rel="stylesheet" href="../dist/leaflet.css"/>
+    <link rel="stylesheet" href="../dist/Control.Geocoder.css"/>
 
-	<script src="../node_modules/leaflet/dist/leaflet.js"></script>
-	<script src="../dist/Control.Geocoder.js"></script>
-	<script src="../dist/Control.Geocoder.HerePlaces.js"></script>
-	<style type="text/css">
-		body {
-			margin: 0;
-		}
+    <script src="../dist/leaflet.js"></script>
+    <script src="../dist/Control.Geocoder.js"></script>
+    <script src="../dist/Control.Geocoder.HerePlaces.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
 
-		#map {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-		}
-	</style>
+        #map {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
-
 <body>
-	<div id="map"></div>
+<div id="map"></div>
 
-	<script type="text/javascript">
+<script type="text/javascript">
+    navigator.geolocation.getCurrentPosition(function (pos) {
+        let param = pos.coords.latitude + "," + pos.coords.longitude;
+        console.log(param);
+        let map = L.map('map').setView([pos.coords.latitude, pos.coords.longitude], 14),
+            geocoder = L.Control.Geocoder.herePlaces({
+                app_id: '<insert your app_id here>',
+                app_code: '<insert your app_code here>',
+                geocodingQueryParams: {
+                    at: param
+                }
+            }),
+            control = L.Control.geocoder({
+                geocoder: geocoder
+            }).addTo(map),
+            marker;
 
-		var hereGeocoder = new L.Control.Geocoder.HEREPLACES({
-			queryMinLength: 3,
-			app_id: 'bC4fb9WQfCCZfkxspD4z',
-			app_code: 'K2Cpd_EKDzrZb1tz0zdpeQ'
-		});
+        new L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            minZoom: 2,
+            maxZoom: 17,
+            attribution: 'Map data: &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende, SRTM | Kartendarstellung: © <a href="http://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+        }).addTo(map);
 
-		var map = L.map('map').setView([55.6783, 12.5313], 6),
-			geocoder = hereGeocoder,
-			control = L.Control.geocoder({
-				geocoder: hereGeocoder
-			}).addTo(map);
-
-		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-		}).addTo(map);
-
-		var marker;
-		map.on('click', function (e) {
-			geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function (data) {
-				if (data.length) {
-					if (marker) {
-						marker.setLatLng(data[0].center).setPopupContent(data[0].name).openPopup();
-					} else {
-						marker = L.marker(data[0].center).bindPopup(data[0].name).addTo(map).openPopup();
-					}
-				}
-			});
-		});
-	</script>
+        map.on('click', function (e) {
+            geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function (results) {
+                var r = results[0];
+                if (r) {
+                    if (marker) {
+                        marker.setLatLng(r.center).setPopupContent(r.html || r.name).openPopup();
+                    } else {
+                        marker = L.marker(r.center).bindPopup(r.name).addTo(map).openPopup();
+                    }
+                }
+            })
+        })
+    });
+</script>
 </body>
-
 </html>

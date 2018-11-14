@@ -1,7 +1,11 @@
-var L = require('leaflet');
-var HerePlaces = require('./geocoders/hereplaces');
+// var L = require('leaflet'),
+// HerePlaces = require('./geocoders/places');
+import L from 'leaflet' ;
+import HerePlaces from './geocoders/places'
+
+module.exports = HerePlaces.class;
 
 L.Util.extend(L.Control.Geocoder, {
-    HEREPLACES: HerePlaces.class,
-    hereplaces: HerePlaces.factory
+	HerePlaces: module.exports,
+	herePlaces: HerePlaces.factory
 });
