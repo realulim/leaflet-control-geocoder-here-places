@@ -45,22 +45,6 @@ module.exports = {
 			this.getJSON(this.options.reverseGeocodeUrl, params, cb, context);
 		},
 
-		getParamString: function (obj, existingUrl, uppercase) {
-			var params = [];
-			for (var i in obj) {
-				var key = encodeURIComponent(uppercase ? i.toUpperCase() : i);
-				var value = obj[i];
-				if (!L.Util.isArray(value)) {
-					params.push(key + '=' + encodeURIComponent(value));
-				} else {
-					for (var j = 0; j < value.length; j++) {
-						params.push(key + '=' + encodeURIComponent(value[j]));
-					}
-				}
-			}
-			return (!existingUrl || existingUrl.indexOf('?') === -1 ? '?' : '&') + params.join('&');
-		},
-
 		executeQuery: function (url, params, callback) {
 			var xmlHttp = new XMLHttpRequest();
 			xmlHttp.onreadystatechange = function () {
@@ -73,7 +57,7 @@ module.exports = {
 				}
 				callback(JSON.parse(xmlHttp.response));
 			};
-			xmlHttp.open('GET', url + this.getParamString(params), true);
+			xmlHttp.open('GET', url + L.Util.getParamString(params), true);
 			xmlHttp.setRequestHeader('Accept', 'application/json');
 			xmlHttp.send(null);
 		},
