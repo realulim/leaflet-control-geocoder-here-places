@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../node_modules/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
 
     <script src="../node_modules/leaflet/dist/leaflet.js"></script>
-    <script src="../node_modules/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="../dist/Control.Geocoder.js"></script>
     <script src="../dist/Control.Geocoder.HerePlaces.js"></script>
     <style type="text/css">
         body {
@@ -30,9 +30,8 @@
 <script type="text/javascript">
     navigator.geolocation.getCurrentPosition(function (pos) {
         let param = pos.coords.latitude + "," + pos.coords.longitude;
-        console.log(param);
         let map = L.map('map').setView([pos.coords.latitude, pos.coords.longitude], 14),
-            geocoder = L.Control.Geocoder.herePlaces({
+            geocoder = L.Control.Geocoder.hereplaces({
                 app_id: '<insert your app_id here>',
                 app_code: '<insert your app_code here>',
                 geocodingQueryParams: {

@@ -2,7 +2,8 @@
   "name": "leaflet-control-geocoder-here-places",
   "version": "0.5",
   "authors": [
-    "Thomas Haarbach<thomashaarbach@gmail.com>"
+    "Ulrich Mayring <ulrich.mayring@isys.de> ",
+    "Thomas Haarbach<thomas.haarbach@isys.de>"
   ],
   "description": "Plugin for leaflet-control-geocder for the HERE places API",
   "main": [
