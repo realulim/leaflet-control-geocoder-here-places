@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Leaflet Control Geocoder</title>
 
-	<meta name='viewport' content='width=device-width, user-scalable=no initial-scale=1, maximum-scale=1'>
-	<meta charset="UTF-8"><meta content="origin" name="referrer">
+    <meta name='viewport' content='width=device-width, user-scalable=no initial-scale=1, maximum-scale=1'>
+    <meta charset="UTF-8">
+    <meta content="origin" name="referrer">
 
-    <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css"/>
-    <link rel="stylesheet" href="../node_modules/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
+    <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="../node_modules/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 
     <script src="../node_modules/leaflet/dist/leaflet.js"></script>
     <script src="../node_modules/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
@@ -24,44 +26,61 @@
         }
     </style>
 </head>
+
 <body>
-<div id="map"></div>
+    <div id="map"></div>
 
-<script type="text/javascript">
-    navigator.geolocation.getCurrentPosition(function (pos) {
-        let param = pos.coords.latitude + "," + pos.coords.longitude;
-        let map = L.map('map').setView([pos.coords.latitude, pos.coords.longitude], 14),
-            geocoder = L.Control.Geocoder.hereplaces({
-				app_id: 'bC4fb9WQfCCZfkxspD4z',
-				app_code: 'K2Cpd_EKDzrZb1tz0zdpeQ',
+    <script type="text/javascript">
+        function getCenter(map) {
+            let center = map.getCenter();
+            return center.lat + "," + center.lng;
+        }
+
+        function createMap(startPos) {
+            var map = L.map('map').setView(startPos, 14);
+            let geocoder = L.Control.Geocoder.hereplaces({
+                app_id: 'bC4fb9WQfCCZfkxspD4z',
+                app_code: 'K2Cpd_EKDzrZb1tz0zdpeQ',
                 geocodingQueryParams: {
-                    at: param
+                    at: startPos[0] + "," + startPos[1]
                 }
-            }),
-            control = L.Control.geocoder({
+            });
+            let control = L.Control.geocoder({
                 geocoder: geocoder
-            }).addTo(map),
-            marker;
+            }).on('startsuggest', function (e) {
+                geocoder.options.geocodingQueryParams.at = getCenter(map);
+            }).on('startgeocode', function (e) {
+                geocoder.options.geocodingQueryParams.at = getCenter(map);
+            }).addTo(map);
 
-        new L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-            minZoom: 2,
-            maxZoom: 17,
-            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-        }).addTo(map);
+            let marker;
 
-        map.on('click', function (e) {
-            geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function (results) {
-                var r = results[0];
-                if (r) {
-                    if (marker) {
-                        marker.setLatLng(r.center).setPopupContent(r.html || r.name).openPopup();
-                    } else {
-                        marker = L.marker(r.center).bindPopup(r.name).addTo(map).openPopup();
+            new L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                minZoom: 2,
+                maxZoom: 17,
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+            }).addTo(map);
+
+            map.on('click', function (e) {
+                geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function (results) {
+                    var r = results[0];
+                    if (r) {
+                        if (marker) {
+                            marker.setLatLng(r.center).setPopupContent(r.html || r.name).openPopup();
+                        } else {
+                            marker = L.marker(r.center).bindPopup(r.name).addTo(map).openPopup();
+                        }
                     }
-                }
+                })
             })
-        })
-    });
-</script>
+        }
+
+        let startPos = navigator.geolocation.getCurrentPosition(
+            function (pos) { createMap([pos.coords.latitude, pos.coords.longitude]); },
+            function (err) { createMap([51.478152, 0.0]); },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        );
+    </script>
 </body>
+
 </html>

@@ -18,6 +18,7 @@ module.exports = {
         geocode: function (query, cb, context) {
             let params = {
                 q: query,
+                tf: 'plain',
                 app_id: this.options.app_id,
                 app_code: this.options.app_code,
             };
@@ -31,7 +32,7 @@ module.exports = {
             let params = {
                 q: query,
                 at: query,
-                tf: 'html',
+                tf: 'plain',
                 app_id: this.options.app_id,
                 app_code: this.options.app_code,
             };
