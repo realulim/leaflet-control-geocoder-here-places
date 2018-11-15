@@ -3,8 +3,11 @@
 ## Leaflet geocoder with support for HERE places API
 This is a plugin for Per Liedmann's Leaflet.Control.Geocoder using the HERE Places (Search) API as a basis for geocoding requests.
 
+## Install
+`npm install leaflet-control-geocoder-here-places`
+
 ## Usage
-[Download latest release](https://github.com/perliedman/leaflet-control-geocoder/releases), or obtain the latest release via cdn or package manager:
+[Download Leaflet.Control.Geocoder](https://github.com/perliedman/leaflet-control-geocoder/releases) or obtain the latest release via cdn or package manager:
 ```
 <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 
