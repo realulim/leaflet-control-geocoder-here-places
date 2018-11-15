@@ -25,20 +25,7 @@ module.exports = {
             };
             params = L.Util.extend(params, this.options.geocodingQueryParams);
 
-            getJSON(this.options.basePath + this.options.searchEndpoint, params,
-                data => {
-                    let results = [], latLngBounds;
-                    for (let item of data.results.items) {
-                        latLngBounds = convertBboxToLatLngBounds(item);
-                        results.push({
-                            name: `${item.title}, ${item.vicinity || item.highlightedVicinity || ''}`,
-                            bbox: latLngBounds,
-                            center: L.latLng(item.position)
-                        });
-                    }
-                    cb.call(context, results);
-                });
-
+            callGetJson(params, cb, context, this.options);
         },
 
         reverse: function (location, scale, cb, context) {
@@ -53,19 +40,7 @@ module.exports = {
             };
             params = L.Util.extend(params, this.options.reverseQueryParams);
 
-            getJSON(this.options.basePath + this.options.searchEndpoint, params,
-                data => {
-                    let results = [], latLngBounds;
-                    for (let item of data.results.items) {
-                        latLngBounds = convertBboxToLatLngBounds(item);
-                        results.push({
-                            name: `${item.title}, ${item.vicinity || item.highlightedVicinity || ''}`,
-                            bbox: latLngBounds,
-                            center: L.latLng(item.position)
-                        });
-                    }
-                    cb.call(context, results);
-                });
+            callGetJson(params, cb, context, this.options);
         },
 
         suggest: function (query, cb, context) {
@@ -82,17 +57,12 @@ module.exports = {
 
             getJSON(this.options.basePath + this.options.suggestEndpoint, params,
                 data => {
-                    let results = [], latLngBounds;
-                    for (let result of data.results) {
-                        latLngBounds = convertBboxToLatLngBounds(result);
-                        results.push({
-                            name: `${result.title}, ${result.vicinity || ''}` || `${result.highlightedTitle}, ${result.highlightedVicinity}` || result.title,
-                            bbox: latLngBounds,
-                            center: L.latLng(result.position),
-                            href: result.href
-                        });
-                    }
-                    cb.call(context, results)
+                    cb.call(context, data.results.map(result => ({
+                        name: `${result.title}, ${result.vicinity || ''}` || `${result.highlightedTitle}, ${result.highlightedVicinity}` || result.title,
+                        bbox: convertHereBoundingBoxToLatLngBounds(result),
+                        center: L.latLng(result.position),
+                        href: result.href
+                    })))
                 }
             );
         }
@@ -103,7 +73,7 @@ module.exports = {
     }
 };
 
-let convertBboxToLatLngBounds = result => {
+const convertHereBoundingBoxToLatLngBounds = result => {
     if (result.hasOwnProperty('bbox')) {
         return L.latLngBounds(
             L.latLng(result.bbox[1], result.bbox[0]),
@@ -112,4 +82,15 @@ let convertBboxToLatLngBounds = result => {
     } else {
         return L.latLngBounds(L.latLng(result.position), L.latLng(result.position));
     }
+};
+
+const callGetJson = (params, cb, context, options) => {
+    getJSON(options.basePath + options.searchEndpoint, params,
+        data => {
+            cb.call(context, data.results.items.map(item => ({
+                name: `${item.title}, ${item.vicinity || item.highlightedVicinity || ''}`,
+                bbox: convertHereBoundingBoxToLatLngBounds(item),
+                center: L.latLng(item.position)
+            })));
+        });
 };
