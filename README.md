@@ -4,22 +4,43 @@
 This is a plugin for Per Liedmann's Leaflet.Control.Geocoder using the HERE Places (Search) API as a basis for geocoding requests.
 
 ## Usage
-[Download latest release](https://github.com/perliedman/leaflet-control-geocoder/releases), or obtain the latest release via cdn or package manager
+[Download latest release](https://github.com/perliedman/leaflet-control-geocoder/releases), or obtain the latest release via cdn or package manager:
 ```
 <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 
 <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 <script src="../dist/Control.Geocoder.HerePlaces.js"></script>
 ```
+Add the control to a map instance:
+```
+let map = L.map('map').setView([52.531,13.3848], 14),
+    geocoder = L.Control.Geocoder.hereplaces({
+              app_id: '<your app_id>',
+              app_code: '<your app_code>',
+              geocodingQueryParams: {
+                at: 52.531,13.3848
+              }
+    }),
+    control = L.Control.geocoder({
+        geocoder: geocoder
+    }).addTo(map),
+    marker;
+
+new L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    minZoom: 2,
+    maxZoom: 17,
+    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+}).addTo(map);
+ ```
 
 ## Demo
-There is a demo available in /demo
-
+Demo available [here](/demo/index.html)
 
 ## HERE Places API Documentations
-[Documentation](https://developer.here.com/documentation/places/topics/overview.html)
 
-[Endpoints](https://places.cit.api.here.com/places) 
+[Places (Search) API Documentation](https://developer.here.com/documentation/places/topics/quick-start-find-text-string.html)
+
+[HERE Places API](https://places.cit.api.here.com/places) 
 
 ### All the credit goes to Per
 Per's repository is here:
