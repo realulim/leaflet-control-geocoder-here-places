@@ -4,7 +4,7 @@
   "description": "Plugin for leaflet-control-geocder for the HERE places API",
   "main": "src/index.js",
   "scripts": {
-    "postinstall": "sh ./scripts/build.sh"
+    "dist": "sh ./scripts/build.sh"
   },
   "repository": {
     "type": "git",
