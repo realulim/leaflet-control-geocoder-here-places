@@ -6,6 +6,11 @@ This is a plugin for Per Liedmann's Leaflet.Control.Geocoder using the HERE Plac
 ## Install
 `npm install leaflet-control-geocoder-here-places`
 
+## Build
+`npm install`
+
+`npm run dist`
+
 ## Usage
 [Download Leaflet.Control.Geocoder](https://github.com/perliedman/leaflet-control-geocoder/releases) or obtain the latest release via cdn or package manager:
 ```
@@ -37,7 +42,7 @@ new L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
  ```
 
 ## Demo
-Demo available [here](/demo/index.html)
+Demo available [here](/demo/index.html) (load file locally in your browser after installation)
 
 ## HERE Places API Documentations
 
